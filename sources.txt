@@ -1,0 +1,5 @@
+https://www.rechtspraak.nl/Uitspraken/Paginas/Open-Data.aspx
+
+https://www.tensorflow.org/text/tutorials/classify_text_with_bert
+https://towardsdatascience.com/feature-extraction-with-bert-for-text-classification-533dde44dc2f
+https://towardsdatascience.com/text-classification-with-bert-in-pytorch-887965e5820f
