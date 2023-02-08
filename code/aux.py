@@ -61,9 +61,15 @@ def extract_plaintiffs_and_defendants(soup):
     
     Imports: extract_text_until, bs4.BeautifulSoup
     """
-    defs, plntfs, lawyers_defs, lawyers_plntfs = None, None, None, None
+    defs, plntfs = None, None
     
     # find the text and the plaintiff div
+    ## Approach: find the strings "in de zaak van|inzake|i n z a k e|" and "tegen|t e g e n" and extract everything
+    ## in between - this is plaintiff
+    
+    ## Approach: find the strings "tegen" and "genoemd|aangeduid"
+    ## in between - this is defendant
+    ## if this doesn't work, or if len(text in between) is too long, find everything between tegen and r"procedure|Procedure|PROCEDURE"
     try:
     	desired_text = soup.find("p", text="in de zaak van").parent.parent
     	# Find the div to which the desired text belongs
@@ -83,6 +89,7 @@ def extract_plaintiffs_and_defendants(soup):
     	desired_div = desired_text.find_next_sibling("div")
     	defendants = desired_div
     
+    ## This part is okay, the above part should be corrected
     if soup.find_all(text = lambda text: re.search(r'advocaten mrs.|advocaat mr.|gemachtig', text)):
     	lawyers = soup.find_all(text = lambda text: re.search(r'advocaten mrs.|advocaat mr.|gemachtig', text))[:2]
     else: 
