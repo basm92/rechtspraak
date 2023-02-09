@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import requests
 import re
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, NavigableString
 import locale
 import time
 locale.setlocale(locale.LC_ALL, 'nl_NL.UTF-8')
@@ -50,10 +50,48 @@ def extract_text_until(element, stopclass: str):
         
     return desired_text
     
-# Extract plaintiffs and defendants
-# Find the div with the text "The desired text"
+# Helper extract_text
+def extract_text(element, end, texts):
+    if element == end:
+        return
+    if isinstance(element, NavigableString):
+        texts.append(element)
+        element = element.next
+        extract_text(element, end, texts)
+    else:
+        element = element.next
+        extract_text(element, end, texts)
+        
 
-def extract_plaintiffs_and_defendants(soup):
+# Find the div with the text "The desired text"
+def extract_plaintiffs_defendants(soup):
+    # For plaintiffs
+    start = soup.find(text = lambda text: re.search(r'in de zaak van|inzake|i n z a k e', text))
+    end = soup.find(text = lambda text: re.search(r'tegen\:', text))
+    
+    if not end:
+    	end = soup.find(text = lambda text: re.search(r'tegen', text)) 
+    	
+    plaintiffs = []
+    extract_text(start, end, plaintiffs)
+
+    # Texts for plaintiffs
+    plaintiffs = [text for text in plaintiffs if len(text) > 3]
+
+    # Texts for defendants
+    start = end
+    end = soup.find(text = lambda text: re.search(r'genoemd|aangeduid', text))
+
+    if not end or len(end) > 500:
+        end = soup.find(text = lambda text: re.search(r'procedure|Procedure|PROCEDURE', text)) 
+    
+    defendants = []
+    extract_text(start, end, defendants)
+    defendants = [text for text in defendants if len(text) > 3]
+    
+    return plaintiffs, defendants
+
+def extract_lawyers(soup):
     """
     From a soup-ed html document, extract the defendents and plaintiffs 
     by making use of the fixed HTML structure inside each court case.
@@ -70,24 +108,6 @@ def extract_plaintiffs_and_defendants(soup):
     ## Approach: find the strings "tegen" and "genoemd|aangeduid"
     ## in between - this is defendant
     ## if this doesn't work, or if len(text in between) is too long, find everything between tegen and r"procedure|Procedure|PROCEDURE"
-    try:
-    	desired_text = soup.find("p", text="in de zaak van").parent.parent
-    	# Find the div to which the desired text belongs
-    	desired_div = desired_text.find_next_sibling("div")
-    	plaintiffs = desired_div
-    except:
-    	desired_text = soup.find("div", {'class':'uitspraak-info'})
-    	plaintiffs = desired_text
-    	
-    try:
-    	desired_text = soup.find(text = lambda text: re.search(r'tegen\:', text)).parent.parent
-    	desired_div = desired_text.find_next_sibling("div")
-    	defendants = desired_div
-    except:
-    	desired_text = soup.find(text = lambda text: re.search(r'tegen', text)).parent.parent
-    	
-    	desired_div = desired_text.find_next_sibling("div")
-    	defendants = desired_div
     
     ## This part is okay, the above part should be corrected
     if soup.find_all(text = lambda text: re.search(r'advocaten mrs.|advocaat mr.|gemachtig', text)):
