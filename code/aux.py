@@ -62,32 +62,56 @@ def extract_text(element, end, texts):
         element = element.next
         extract_text(element, end, texts)
         
+ # Helper for the new soup (inside extract plaintiffs/defendants):
+def make_new_soup(node_in_old_soup):
+    elements = []
+    node = node_in_old_soup
+
+    while node:
+    	elements.append(node)
+    	node = node.find_next()
+
+    content = ''.join([str(element) for element in elements])
+    new_soup = BeautifulSoup(content, 'html.parser') 
+    
+    return new_soup
+
+# Final helper - delete duplicates from list
+def delete_duplicates(lst):
+    new_list = []
+    for element in lst:
+    	if element not in new_list:
+    	    new_list.append(element)
+    return new_list
+
 
 # Find the div with the text "The desired text"
 def extract_plaintiffs_defendants(soup):
     # For plaintiffs
-    start = soup.find(text = lambda text: re.search(r'in de zaak van|inzake|i n z a k e', text))
+    start = soup.find(text = lambda text: re.search(r'in de zaak van|in de zaak|inzake|i n z a k e|INZAKE|I N Z A K E', text))
     end = soup.find(text = lambda text: re.search(r'tegen\:', text))
     
     if not end:
-    	end = soup.find(text = lambda text: re.search(r'tegen', text)) 
+        end = soup.find(text = lambda text: re.search(r'tegen', text)) 
     	
     plaintiffs = []
     extract_text(start, end, plaintiffs)
 
     # Texts for plaintiffs
-    plaintiffs = [text for text in plaintiffs if len(text) > 3]
+    plaintiffs = delete_duplicates([text for text in plaintiffs if len(text) > 3])
 
     # Texts for defendants
-    start = end
-    end = soup.find(text = lambda text: re.search(r'genoemd|aangeduid', text))
+    ## Update the soup to only loop for stuff after the plaintiff information
+    new_soup = make_new_soup(end)
+    new_start = new_soup.find(text = lambda text: re.search(r'tegen', text))
+    new_end = new_soup.find(text = lambda text: re.search(r'genoemd|aangeduid|noemen', text))
 
-    if not end or len(end) > 500:
-        end = soup.find(text = lambda text: re.search(r'procedure|Procedure|PROCEDURE', text)) 
+    if not new_end or len(new_end) > 500:
+        new_end = new_soup.find(text = lambda text: re.search(r'procedure|Procedure|PROCEDURE', text)) 
     
     defendants = []
-    extract_text(start, end, defendants)
-    defendants = [text for text in defendants if len(text) > 3]
+    extract_text(new_start, new_end, defendants)
+    defendants = delete_duplicates([text for text in defendants if len(text) > 3])
     
     return plaintiffs, defendants
 
@@ -99,7 +123,6 @@ def extract_lawyers(soup):
     
     Imports: extract_text_until, bs4.BeautifulSoup
     """
-    defs, plntfs = None, None
     
     # find the text and the plaintiff div
     ## Approach: find the strings "in de zaak van|inzake|i n z a k e|" and "tegen|t e g e n" and extract everything
@@ -115,7 +138,7 @@ def extract_lawyers(soup):
     else: 
     	lawyers = None
     
-    return defs, plntfs, lawyers
+    return lawyers
     
 # Bedrag?
 ## check conventie/reconventie
