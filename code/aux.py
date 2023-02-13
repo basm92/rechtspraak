@@ -10,6 +10,21 @@ locale.setlocale(locale.LC_ALL, 'nl_NL.UTF-8')
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
+# Couple of helpers
+def filter_dictionaries_lose(set_of_dicts):
+    """
+    Filter out empty dictionaries
+    """
+    out = {"lose":[i for i in set_of_dicts if i]}
+    return out
+
+def filter_dictionaries_bedrag(set_of_dicts):
+    """
+    Filter out empty dictionaries
+    """
+    out = {"bedrag_given":[i for i in set_of_dicts if i]}
+    return out
+
 def convert_money(money_string):
     """
     Convert a Dutch-format money string to a float
@@ -93,6 +108,9 @@ def extract_plaintiffs_defendants(soup):
     
     if not end:
         end = soup.find(text = lambda text: re.search(r'tegen', text)) 
+        
+    if not end:
+    	end = soup.find(text = lambda text: re.search(r't e g e n', text))
     	
     plaintiffs = []
     extract_text(start, end, plaintiffs)
