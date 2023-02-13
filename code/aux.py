@@ -103,7 +103,7 @@ def delete_duplicates(lst):
 # Find the div with the text "The desired text"
 def extract_plaintiffs_defendants(soup):
     # For plaintiffs
-    start = soup.find(text = lambda text: re.search(r'in de zaak van|in de zaak|inzake|i n z a k e|INZAKE|I N Z A K E', text))
+    start = soup.find(text = lambda text: re.search(r'in de zaak van|in de zaak|inzake|i n z a k e|I n z a k e|INZAKE|I N Z A K E', text))
     end = soup.find(text = lambda text: re.search(r'tegen\:', text))
     
     if not end:
@@ -151,8 +151,8 @@ def extract_lawyers(soup):
     ## if this doesn't work, or if len(text in between) is too long, find everything between tegen and r"procedure|Procedure|PROCEDURE"
     
     ## This part is okay, the above part should be corrected
-    if soup.find_all(text = lambda text: re.search(r'advocaten mrs.|advocaat mr.|gemachtig', text)):
-    	lawyers = soup.find_all(text = lambda text: re.search(r'advocaten mrs.|advocaat mr.|gemachtig', text))[:2]
+    if soup.find_all(text = lambda text: re.search(r'advocaten mrs.|advocaat: mr.|advocaat mr.|gemachtig', text)):
+    	lawyers = soup.find_all(text = lambda text: re.search(r'advocaten mrs.|advocaat: mr.|advocaat mr.|gemachtig', text))[:2]
     else: 
     	lawyers = None
     
