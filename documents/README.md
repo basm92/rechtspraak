@@ -13,9 +13,9 @@ We set out to look for the following variables:
   - Financieel belang
   - Toegewezen bedrag
   - Uitspraak van de rechter: de mate waarin de partij die zaak aanspant wordt door de rechter in het gelijk gesteld.
-  - **aantal rechters onderin
-	- naam van de rechters**
-	- kort geding dummy variabele
+  - **aantal rechters onderin**
+  - **naam van de rechters**
+  - kort geding dummy variabele
 
 The ones in bold are not yet implemented 
   - But should be easy to implement this 
