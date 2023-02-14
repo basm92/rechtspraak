@@ -43,12 +43,22 @@ The ones in bold are not yet implemented
 | De procedure, De Feiten, Het Geschil, De Beoordeling, De Beslissing | Transcription of the text of the court case |
 | lawyers | Names of lawyers, incassobureau or other parties present |
 | bedrag | A dictionary of variable length, split up by section in "The Beslissing": In each element in the dictionary, which money amounts are mentioned in the court case (3) (4)|
+| plaintiff | Name(s) of the plaintiff(s) and their representation (lawyer) |
+| defendant | Name(s) of the defendant(s) and their representation (lawyer) (5) |
+| lose | A dictionary of length 1 **OR** length 2 (in case of conventie/reconventie). If lenght 1, the dictionary contains dummies for each section, indicating whether the court has mentioned that the party's claims are **rejected**. If length 2, the dictionary contains dummies separately for conventie/reconventie, and then for each section and each conventie/reconventie, whether the claims have been **rejected**. (6) |
+| bedrag | A dictionary of length 1 **OR** length 2 (in case of conventie/reconventie). Similar data structure to bedrag, with a variable length for each unique money amount mentioned in that section. (7) |
 
 
 
 #### Notes
 
-(1) And identifier to match with the other metadata in trial_small, including Dossiernummer (Case number)
-(2) Including dummy for "Kort geding"
-(3) For practical purposes, these numbers can be added together to get a sense of the total amount of money at play in the court case
-(4) This variable takes into account repeated mentions of money amount by only taking the unique elements
+1. And identifier to match with the other metadata in trial_small, including Dossiernummer (Case number)
+2. Including dummy for "Kort geding"
+3. For practical purposes, these numbers can be added together to get a sense of the total amount of money at play in the court case
+4. This variable takes into account repeated mentions of money amount by only taking the unique elements
+5. These two variabels include the name of the lawyer. With data manipulation, it is easy to filter this out, but I wanted to let this in in order to identify which lawyer belongs to which party. 
+6. So the data structure of this variable is as follows: 
+	- If conventie/reconventie, the dictionary consists of two elements, attempting to split up the conventie and reconventie part. If not, it constists of one element. 
+	- Each of those elements contains a variable number of dummies corresponding to each section in the Conclusion. 
+	- Each of those dummies indicate, for each section, whether a string match has been found indicating that the claim in that section is **rejected**. For completeness, the exact string match is reported as a `re.match` object showing the exact match, rather than a 0/1 dummy. 
+7. My suggestion would be to consider all money amounts in the sections AFTER a match of a rejection has been found as negative amounts, i.e. amounts the plaintiffs (or reconvener) has to pay because the claims have been rejected. 
