@@ -42,11 +42,11 @@ The ones in bold are not yet implemented
 | Formele relaties | Formal relations (if applicable) |
 | De procedure, De Feiten, Het Geschil, De Beoordeling, De Beslissing | Transcription of the text of the court case |
 | lawyers | Names of lawyers, incassobureau or other parties present |
-| bedrag | A dictionary of variable length, split up by section in "The Beslissing": In each element in the dictionary, which money amounts are mentioned in the court case (3) (4)|
+| bedrag | Based on "Beslissing". A dictionary of variable length, split up by section in "The Beslissing": In each element in the dictionary, which money amounts are mentioned in the court case (3) (4)|
 | plaintiff | Name(s) of the plaintiff(s) and their representation (lawyer) |
 | defendant | Name(s) of the defendant(s) and their representation (lawyer) (5) |
-| lose | A dictionary of length 1 **OR** length 2 (in case of conventie/reconventie). If lenght 1, the dictionary contains dummies for each section, indicating whether the court has mentioned that the party's claims are **rejected**. If length 2, the dictionary contains dummies separately for conventie/reconventie, and then for each section and each conventie/reconventie, whether the claims have been **rejected**. (6) |
-| bedrag | A dictionary of length 1 **OR** length 2 (in case of conventie/reconventie). Similar data structure to bedrag, with a variable length for each unique money amount mentioned in that section. (7) |
+| lose | Based on "Conclusie". A dictionary of length 1 **OR** length 2 (in case of conventie/reconventie). If lenght 1, the dictionary contains dummies for each section, indicating whether the court has mentioned that the party's claims are **rejected**. If length 2, the dictionary contains dummies separately for conventie/reconventie, and then for each section and each conventie/reconventie, whether the claims have been **rejected**. (6) |
+| bedrag | Based on "Conclusie". A dictionary of length 1 **OR** length 2 (in case of conventie/reconventie). Similar data structure to bedrag, with a variable length for each unique money amount mentioned in that section. (7) |
 
 
 
