@@ -1,0 +1,28 @@
+In Python, using fuzzy string matching, can you write a piece of code that takes as input a precise string and approximately matches a potential string in a wider piece of text?
+
+Yes, you can use the fuzzywuzzy library in Python to perform fuzzy string matching. Here's an example code that takes a precise string and matches it against a wider piece of text:
+
+```{python}
+
+from fuzzywuzzy import fuzz
+
+precise_string = "apple pie"
+text = "I love eating apple pies. They are my favorite dessert!"
+
+# Set a threshold for matching
+threshold = 80
+
+# Iterate through each substring in the text and calculate its fuzzy score with the precise string
+for i in range(len(text) - len(precise_string) + 1):
+    substring = text[i:i + len(precise_string)]
+    score = fuzz.token_set_ratio(precise_string, substring)
+    
+    # Check if the fuzzy score is above the threshold
+    if score >= threshold:
+        print(f"Match found: {substring}")
+```
+
+
+In this example, the code searches through each substring of the text that is the same length as the precise string (in this case, "apple pie"). It then calculates the fuzzy score between the precise string and the substring using the token_set_ratio function from the fuzzywuzzy library. If the score is above the threshold (which we set to 80), the code prints the matched substring.
+
+Note that the token_set_ratio function uses a token-based approach to fuzzy matching, which means that it breaks the input strings into individual words and compares them. This can be more effective than character-based matching in some cases, especially when there are typos or spelling variations. However, it also means that the precise string and the potential matches need to have the same number of words to be considered a match. If this is not the case, you may need to modify the code to use a different fuzzy matching function, such as partial_ratio or ratio.
